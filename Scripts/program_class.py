@@ -7,7 +7,7 @@ class ChristmasJumps:
     def start_game():
         """Функция которая запускает основной цикл игры"""
         pygame.init()
-        screen = pygame.display.set_mode((1000, 600))
+        screen = pygame.display.set_mode((1920, 1080))
         running = True
         while running:
             for event in pygame.event.get():
