@@ -5,7 +5,7 @@ class MainMenu:
     pass
 
 
-class Levels:
+class LevelsMenu:
     # Класс который отображает все левелы
     # Реализует Кирилл
     pass
