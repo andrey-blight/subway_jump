@@ -10,19 +10,20 @@ class ChristmasJumps:
         self.state = "game"  # То что мы будем отображать
         self.game = Game()  # Игра
 
-    def _render(self):
+    def _render(self, events):
         if self.state == "game":  # Если состояние игра то запускаем игру
-            self.game.render()
+            self.game.render(events)
 
     def start_game(self):
-        clock = pygame.time.Clock()
         pygame.init()
+        clock = pygame.time.Clock()
         running = True
         while running:
-            for event in pygame.event.get():
+            events = pygame.event.get()
+            for event in events:
                 if event.type == pygame.QUIT:
                     running = False
-            self._render()
-            pygame.display.flip()
+            self._render(events)
             clock.tick(FPS)
+            pygame.display.flip()
         pygame.quit()
