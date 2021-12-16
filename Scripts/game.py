@@ -1,5 +1,5 @@
 import pygame
-from constans import *
+from constants import *
 from Platforms import *
 from main_hero import Hero
 

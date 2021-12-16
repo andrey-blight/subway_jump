@@ -1,5 +1,5 @@
 import pygame
-from constans import *
+from constants import *
 
 
 class BlockBorder(pygame.sprite.Sprite):

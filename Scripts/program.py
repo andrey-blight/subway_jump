@@ -1,6 +1,6 @@
 import pygame
 from game import Game
-from constans import *
+from constants import *
 
 
 class ChristmasJumps:

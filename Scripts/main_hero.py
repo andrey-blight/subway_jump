@@ -1,5 +1,5 @@
 import pygame
-from constans import *
+from constants import *
 
 
 class Hero(pygame.sprite.Sprite):
