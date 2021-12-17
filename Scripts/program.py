@@ -1,5 +1,4 @@
 import pygame
-
 from Scripts.game import Game
 from menu_and_pause import *
 
@@ -8,7 +7,7 @@ class ChristmasJumps:
     """Класс со всей игровой логикой"""
 
     def __init__(self):
-        self.state = "level_menu"  # То что мы будем отображать
+        self.state = "menu_level"  # То что мы будем отображать
         self.game = Game()  # Игра
         self.level_menu = LevelMenu(self)
 
@@ -16,10 +15,13 @@ class ChristmasJumps:
         self.state = state
 
     def _render(self, events):
-        if self.state == "game":  # Если состояние игра то запускаем игру
+        state = self.state.split("_")
+        if state[0] == "level":  # Если состояние игра то запускаем игру
+            # TODO добавить отрисовку уровня
             self.game.render(events)
-        elif self.state == "level_menu":
-            self.level_menu.render(events)  # Отрисовка меню с уровнями
+        elif state[0] == "menu":
+            if state[1] == "level":
+                self.level_menu.render(events)  # Отрисовка меню с уровнями
 
     def start_game(self):
         """Главный игровой цикл"""

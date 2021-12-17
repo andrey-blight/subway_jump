@@ -3,13 +3,16 @@ from program import *
 
 
 class LevelMenu:
+    """Класс главного меню"""
+
     def __init__(self, program):
         self.program = program
         self.background = pygame.image.load(r"..\Images\level_background.jpg")
         self.levels = pygame.sprite.Group()
-        self.set_levels(30)
+        self.set_levels(1)
 
     def set_levels(self, count):
+        """Метод, который создает заданное количество уровней"""
         x = 100
         y = 200
         for i in range(1, count + 1):
@@ -23,28 +26,32 @@ class LevelMenu:
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 for el in self.levels.sprites():
-                    if el.clicked(*pygame.mouse.get_pos()):
-                        self.program.set_state("game")
-
+                    # Если мышка попала на уровень, то получаем название режима
+                    state = el.clicked(*pygame.mouse.get_pos())
+                    if state:
+                        self.program.set_state(state)  # Меняем режим игры
+        # Настройки шрифта
         font = pygame.font.SysFont("Roboto", 100)
-        text = font.render('Главное меню', True, (154, 206, 235))
-        SCREEN.blit(self.background, self.background.get_rect())
-        SCREEN.blit(text, (675, 75))
+        text = font.render('Выберете уровень', True, (154, 206, 235))
+        SCREEN.blit(self.background, self.background.get_rect())  # Отображение заднего фона
+        SCREEN.blit(text, (675, 75))  # Отображение текста
         self.levels.draw(SCREEN)
 
 
 class LevelSprite(pygame.sprite.Sprite):
+    """Класс иконки с уровнем"""
     SIZE = 100  # Размер одного блока
     IMAGE = pygame.image.load(r"..\Images\snowflake_level.png")
 
     def __init__(self, pos, number):
         super().__init__()
-        self.level = number
-        pygame.font.init()
-        self.image = pygame.Surface((self.SIZE, self.SIZE), pygame.SRCALPHA, 32)
-        self.image.blit(self.IMAGE, (0, 0))
+        self.level = number  # Номер уровня
+        pygame.font.init()  # Инициализируем шрифт
+        self.image = pygame.Surface((self.SIZE, self.SIZE), pygame.SRCALPHA, 32)  # Прозрачный surface
+        self.image.blit(self.IMAGE, (0, 0))  # Добавляем изображение
         font = pygame.font.SysFont("Roboto", 60)
-        text = font.render(f'{number}', True, (252, 252, 238))
+        text = font.render(f'{number}', True, (234, 230, 202))
+        # Если число двузначное то смещаем левее
         if number >= 10:
             self.image.blit(text, (25, 35))
         else:
@@ -54,6 +61,7 @@ class LevelSprite(pygame.sprite.Sprite):
         self.y = pos[1]
 
     def clicked(self, x, y):
+        """Метод который проверяет нажали ли на иконку с уровнем"""
         if self.rect.x <= x <= self.rect.x + self.SIZE and self.rect.y <= y <= self.rect.y + self.SIZE:
-            print(self.level)
-            return True
+            return f"level_{self.level}"
+        return False
