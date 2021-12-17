@@ -29,7 +29,6 @@ class Game:
                 self.move_world = False
         if self.move_world:
             self.world_off_cet += 2
-        print(len(self.platforms.sprites()), len(self.ground.sprites()))
         SCREEN.blit(self.background, self.background.get_rect())
         self.platforms.update(self.world_off_cet)
         self.ground.update(self.world_off_cet)

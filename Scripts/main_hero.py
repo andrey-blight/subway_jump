@@ -16,9 +16,12 @@ class Hero(pygame.sprite.Sprite):
     def update(self, platforms):
         self.rect = self.rect.move(self.speed_x, self.speed_y)  # Перемещение по с заданными скоростями
         if self.gravity == "down":
-            if pygame.sprite.spritecollideany(self, platforms):
-                # Если мы столкнулись с землей, то рассчитываем скорость и отталкиваемся
-                self.speed_y = -(2 * G * JUMP_HEIGHT) ** 0.5
-            else:
+            collide_platform = pygame.sprite.spritecollide(self, platforms, False)
+            air = True
+            for el in collide_platform:
+                if pygame.sprite.spritecollideany(self, el.get_top_border()):
+                    self.speed_y = -(2 * G * JUMP_HEIGHT) ** 0.5
+                    air = False
+            if air:
                 # Добавляем ускорение свободного падения если нет опоры
                 self.speed_y += G

@@ -42,7 +42,7 @@ class SnowPlatform(StandardBlock):
         self.top_border.add()
 
     def get_top_border(self):
-        pass
+        return self.top_border
 
     def update(self, x_off_cet):
         self.top_border.update(self.rect.x, self.rect.y)
