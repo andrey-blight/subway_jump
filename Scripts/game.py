@@ -1,4 +1,3 @@
-import pygame
 from Platforms import *
 from main_hero import Hero
 

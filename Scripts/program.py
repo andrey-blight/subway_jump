@@ -1,6 +1,6 @@
 import pygame
-from game import Game
-from constants import *
+
+from Scripts.game import Game
 from menu_and_pause import *
 
 
