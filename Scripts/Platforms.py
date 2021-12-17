@@ -7,15 +7,17 @@ class BlockBorder(pygame.sprite.Sprite):
     def __init__(self, x1, y1, x2, y2):
         super().__init__()
         if x1 == x2:  # вертикальная стенка
-            self.image = pygame.Surface((2, y2 - y1))
-            self.rect = pygame.Rect(x1, y1, 2, y2 - y1)
+            self.image = pygame.Surface((3, y2 - y1))
+            self.rect = pygame.Rect(x1, y1, 3, y2 - y1)
         else:  # горизонтальная стенка
-            self.image = pygame.Surface((x2 - x1, 2))
-            self.rect = pygame.Rect(x1, y1, x2 - x1, 2)
+            self.image = pygame.Surface((x2 - x1, 3))
+            self.rect = pygame.Rect(x1, y1, x2 - x1, 3)
+        self.x = x1
+        self.y = y1
 
-    def update(self, x, y) -> None:
-        self.rect.x = x
-        self.rect.y = y
+    def update(self, x_off_cet, y_off_cet) -> None:
+        self.rect.x = self.x - x_off_cet
+        self.rect.y = self.y - y_off_cet
 
 
 class StandardBlock(pygame.sprite.Sprite):
@@ -39,15 +41,13 @@ class SnowPlatform(StandardBlock):
         self.image = self.IMAGE
         self.top_border = pygame.sprite.GroupSingle()
         self.top_border.add(BlockBorder(self.x, self.y, self.x + StandardBlock.BLOCK_SIZE, self.y))
-        self.top_border.add()
 
     def get_top_border(self):
         return self.top_border
 
     def update(self, x_off_cet):
-        self.top_border.update(self.rect.x, self.rect.y)
-        self.top_border.draw(SCREEN)
         super(SnowPlatform, self).update(x_off_cet)
+        self.top_border.update(x_off_cet, 0)
 
 
 class Ground(StandardBlock):
