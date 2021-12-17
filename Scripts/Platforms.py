@@ -41,6 +41,9 @@ class SnowPlatform(StandardBlock):
         self.top_border.add(BlockBorder(self.x, self.y, self.x + StandardBlock.BLOCK_SIZE, self.y))
         self.top_border.add()
 
+    def get_top_border(self):
+        pass
+
     def update(self, x_off_cet):
         self.top_border.update(self.rect.x, self.rect.y)
         self.top_border.draw(SCREEN)
