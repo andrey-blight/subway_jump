@@ -1,5 +1,4 @@
 import pygame
-from constants import *
 from Platforms import *
 from main_hero import Hero
 
@@ -27,6 +26,8 @@ class Game:
                 self.move_world = True
             if event.type == pygame.KEYUP and event.key == pygame.K_d:
                 self.move_world = False
+            if event.type == pygame.KEYDOWN and (event.key in [pygame.K_SPACE, pygame.K_w, pygame.K_UP]):
+                self.main_hero.sprite.set_jump(True, self.platforms)  # Устанавливаем главному герою прыжок
         if self.move_world:
             self.world_off_cet += 2
         SCREEN.blit(self.background, self.background.get_rect())

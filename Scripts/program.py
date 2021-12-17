@@ -15,6 +15,7 @@ class ChristmasJumps:
             self.game.render(events)
 
     def start_game(self):
+        """Главный игровой цикл"""
         pygame.init()
         clock = pygame.time.Clock()
         running = True
