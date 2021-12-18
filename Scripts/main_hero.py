@@ -34,7 +34,7 @@ class Hero(pygame.sprite.Sprite):
         self.jump = value
 
     def update(self, direction, platforms):
-        self.rect = self.rect.move(self.speed_x, self.speed_y)  # Перемещение по с заданными скоростями
+        self.rect.move_ip(self.speed_x, self.speed_y)  # Перемещение по с заданными скоростями
         # Получаем список всех границ на которых стоит главный герой
         collide_border = self.get_collide_borders(platforms)
         if self.gravity == "down":
@@ -52,6 +52,8 @@ class Hero(pygame.sprite.Sprite):
                 # Добавляем ускорение свободного падения если нет опоры
                 self.speed_y += G
             if direction == 1:
-                self.rect.move_ip(SIDE_SPEED, 0)
+                self.speed_x = SIDE_SPEED
             elif direction == -1:
-                self.rect.move_ip(-SIDE_SPEED, 0)
+                self.speed_x = -SIDE_SPEED
+            else:
+                self.speed_x = 0

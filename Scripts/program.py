@@ -7,17 +7,18 @@ class ChristmasJumps:
     """Класс со всей игровой логикой"""
 
     def __init__(self):
-        self.state = "level"  # То что мы будем отображать
+        self.state = "menu_level"  # То что мы будем отображать
         self.game = Game()  # Игра
         self.level_menu = LevelMenu(self)
 
     def set_state(self, state):
         self.state = state
+        if state.split("_")[0] == "level":
+            self.game.set_level(state.split("_")[1])
 
     def _render(self, events):
         state = self.state.split("_")
         if state[0] == "level":  # Если состояние игра то запускаем игру
-            # TODO добавить отрисовку уровня
             self.game.render(events)
         elif state[0] == "menu":
             if state[1] == "level":

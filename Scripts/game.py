@@ -10,15 +10,29 @@ class Game:
         self.player_direction = 0  # Направление движения игрока по оси x (0 на месте, 1 направо, -1 налево)
         self.platforms = pygame.sprite.Group()  # Платформы на которых прыгает герой
         self.ground = pygame.sprite.Group()  # Платформы земли
-        self.main_hero = pygame.sprite.GroupSingle()  # Сам главный герой
+        self.main_hero = pygame.sprite.GroupSingle()  # Главный герой
         self.gravity = "down"
-        self.set_blocks()  # Расставляем блоки
 
-    def set_blocks(self):
-        for i in range(0, 1920, 50):
-            self.ground.add(Ground((i, 1030)))
-            self.platforms.add(SnowPlatform((i, 800)))
-        self.main_hero.add(Hero((100, 0), self.gravity))
+    def set_level(self, level):
+        if level == '1':
+            # self.platforms.clear()
+            # self.ground.clear()
+            # self.main_hero.clear()
+            for x in range(100, 301, 50):
+                self.platforms.add(SnowPlatform((x, 600)))
+            for x in range(470, 650, 50):
+                self.platforms.add(SnowPlatform((x, 400)))
+            for x in range(1000, 1150, 50):
+                self.platforms.add(SnowPlatform((x, 800)))
+            for x in range(1250, 1251, 50):
+                self.platforms.add(SnowPlatform((x, 600)))
+            for x in range(1400, 1501, 50):
+                self.platforms.add(SnowPlatform((x, 450)))
+            for x in range(1700, 1900, 50):
+                self.platforms.add(SnowPlatform((x, 850)))
+            for x in range(-500, 2500, 50):
+                self.ground.add(Ground((x, 1030)))
+            self.main_hero.add(Hero((150, 600), self.gravity))
 
     def render(self, events):
         for event in events:
