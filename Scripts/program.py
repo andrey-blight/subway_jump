@@ -7,7 +7,7 @@ class ChristmasJumps:
     """Класс со всей игровой логикой"""
 
     def __init__(self):
-        self.state = "menu_level"  # То что мы будем отображать
+        self.state = "level"  # То что мы будем отображать
         self.game = Game()  # Игра
         self.level_menu = LevelMenu(self)
 

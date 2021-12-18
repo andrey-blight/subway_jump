@@ -2,7 +2,7 @@ from constants import *
 
 
 class Hero(pygame.sprite.Sprite):
-    def __init__(self, pos):
+    def __init__(self, pos, gravity):
         super().__init__()
         self.image = pygame.Surface((25, 50))
         self.image.fill('red')
@@ -10,8 +10,11 @@ class Hero(pygame.sprite.Sprite):
         #               ФИЗИКА
         self.speed_x = 0  # Скорость по горизонтали
         self.speed_y = 0  # Скорость по вертикали
-        self.gravity = "down"  # Направление гравитации
+        self.gravity = gravity  # Направление гравитации
         self.jump = False  # Прыжок персонажа
+
+    def get_cords(self):
+        return self.rect.x, self.rect.y
 
     def get_collide_borders(self, platforms):
         """Метод который возвращает платформы, на которых стоит главный герой"""
@@ -30,7 +33,7 @@ class Hero(pygame.sprite.Sprite):
             value = False
         self.jump = value
 
-    def update(self, platforms):
+    def update(self, direction, platforms):
         self.rect = self.rect.move(self.speed_x, self.speed_y)  # Перемещение по с заданными скоростями
         # Получаем список всех границ на которых стоит главный герой
         collide_border = self.get_collide_borders(platforms)
@@ -48,3 +51,7 @@ class Hero(pygame.sprite.Sprite):
             else:
                 # Добавляем ускорение свободного падения если нет опоры
                 self.speed_y += G
+            if direction == 1:
+                self.rect.move_ip(SIDE_SPEED, 0)
+            elif direction == -1:
+                self.rect.move_ip(-SIDE_SPEED, 0)

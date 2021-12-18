@@ -6,3 +6,4 @@ HEIGHT = 1080  # Высота окна
 SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))  # Экран
 G = 20 / FPS  # Ускарение свободного падения
 JUMP_HEIGHT = 350  # Высота прыжка
+SIDE_SPEED = 500 / FPS  # Скорость передвижения влево и вправо

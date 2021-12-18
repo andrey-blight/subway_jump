@@ -19,9 +19,11 @@ class BlockBorder(pygame.sprite.Sprite):
     def get_block(self):
         return self.block
 
-    def update(self, x_off_cet, y_off_cet):
-        self.rect.x = self.x - x_off_cet
-        self.rect.y = self.y - y_off_cet
+    def update(self, x_direction, y_direction):
+        if x_direction == 1:
+            self.rect.move_ip(-SIDE_SPEED, 0)
+        elif x_direction == -1:
+            self.rect.move_ip(SIDE_SPEED, 0)
 
 
 class StandardBlock(pygame.sprite.Sprite):
@@ -34,8 +36,11 @@ class StandardBlock(pygame.sprite.Sprite):
         self.x = pos[0]
         self.y = pos[1]
 
-    def update(self, x_off_cet):
-        self.rect.x = self.x - x_off_cet
+    def update(self, x_direction):
+        if x_direction == 1:
+            self.rect.move_ip(-SIDE_SPEED, 0)
+        elif x_direction == -1:
+            self.rect.move_ip(SIDE_SPEED, 0)
 
 
 class SnowPlatform(StandardBlock):
@@ -52,9 +57,9 @@ class SnowPlatform(StandardBlock):
     def get_top_border(self):
         return self.top_border
 
-    def update(self, x_off_cet):
-        super(SnowPlatform, self).update(x_off_cet)
-        self.top_border.update(x_off_cet, 0)
+    def update(self, x_direction):
+        super(SnowPlatform, self).update(x_direction)
+        self.top_border.update(x_direction, 0)
 
 
 class Ground(StandardBlock):
