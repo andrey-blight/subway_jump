@@ -2,8 +2,9 @@ from constants import *
 
 
 class Hero(pygame.sprite.Sprite):
-    def __init__(self, pos, gravity):
+    def __init__(self, pos, gravity, program):
         super().__init__()
+        self.program = program
         self.image = pygame.Surface((25, 50))
         self.image.fill('red')
         self.rect = self.image.get_rect(topleft=pos)
@@ -33,7 +34,11 @@ class Hero(pygame.sprite.Sprite):
             value = False
         self.jump = value
 
-    def update(self, direction, platforms):
+    def update(self, direction, platforms, finish, enemies):
+        if pygame.sprite.spritecollide(self, finish, False):
+            self.program.set_state("menu_level")  # Если дошли до финиша
+        if pygame.sprite.spritecollide(self, enemies, False):
+            self.program.set_state("menu_level")  # Если погибли
         self.rect.move_ip(self.speed_x, self.speed_y)  # Перемещение по с заданными скоростями
         # Получаем список всех границ на которых стоит главный герой
         collide_border = self.get_collide_borders(platforms)
@@ -51,9 +56,9 @@ class Hero(pygame.sprite.Sprite):
             else:
                 # Добавляем ускорение свободного падения если нет опоры
                 self.speed_y += G
-            if direction == 1:
+            if direction == 1:  # Движение направо
                 self.speed_x = SIDE_SPEED
-            elif direction == -1:
+            elif direction == -1:  # Движение налево
                 self.speed_x = -SIDE_SPEED
             else:
                 self.speed_x = 0

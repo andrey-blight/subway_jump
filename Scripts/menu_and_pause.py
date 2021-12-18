@@ -1,4 +1,4 @@
-from Platforms import *
+from platforms import *
 from program import *
 
 
@@ -9,9 +9,9 @@ class LevelMenu:
         self.program = program
         self.background = pygame.image.load(r"..\Images\level_background.jpg")
         self.levels = pygame.sprite.Group()
-        self.set_levels(2)
+        self._set_levels(2)
 
-    def set_levels(self, count):
+    def _set_levels(self, count):
         """Метод, который создает заданное количество уровней"""
         x = 100
         y = 200

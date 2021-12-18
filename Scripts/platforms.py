@@ -69,3 +69,12 @@ class Ground(StandardBlock):
     def __init__(self, pos):
         super().__init__(pos)
         self.image = self.IMAGE
+
+
+class Finish(StandardBlock):
+    """Класс финиша при касание которого уровень проходится"""
+    IMAGE = pygame.image.load(r"..\Images\finish.png")
+
+    def __init__(self, pos):
+        super().__init__(pos)
+        self.image = self.IMAGE

@@ -1,23 +1,33 @@
-from Platforms import *
+from platforms import *
 from main_hero import Hero
 
 
 class Game:
-    def __init__(self):
+    def __init__(self, program):
+        self.program = program
         self.background = pygame.image.load(r"..\Images\background.jpg")
         self.move = ""  # Направление движения
         self.world_direction = 0  # Направление изменения мира (0 на месте, 1 направо, -1 налево)
         self.player_direction = 0  # Направление движения игрока по оси x (0 на месте, 1 направо, -1 налево)
         self.platforms = pygame.sprite.Group()  # Платформы на которых прыгает герой
-        self.ground = pygame.sprite.Group()  # Платформы земли
+        self.enemies = pygame.sprite.Group()  # Все что убивает игрока при касании
         self.main_hero = pygame.sprite.GroupSingle()  # Главный герой
-        self.gravity = "down"
+        self.finish = pygame.sprite.GroupSingle()  # Финиш уровня
+        self.gravity = "down"  # Направление гравитации
+
+    def _clear_game(self):
+        """Метод который очищает все группы и движения"""
+        self.platforms = pygame.sprite.Group()  # Платформы на которых прыгает герой
+        self.enemies = pygame.sprite.Group()  # Платформы земли
+        self.main_hero = pygame.sprite.GroupSingle()  # Главный герой
+        self.finish = pygame.sprite.GroupSingle()  # Финиш уровня
+        self.world_direction = 0  # Направление изменения мира (0 на месте, 1 направо, -1 налево)
+        self.player_direction = 0  # Направление движения игрока по оси x (0 на месте, 1 направо, -1 налево)
+        self.move = ""  # Направление движения
 
     def set_level(self, level):
-        if level == '1':
-            # self.platforms.clear()
-            # self.ground.clear()
-            # self.main_hero.clear()
+        if level == '1':  # Генерация первого уровня
+            self._clear_game()
             for x in range(100, 301, 50):
                 self.platforms.add(SnowPlatform((x, 600)))
             for x in range(470, 650, 50):
@@ -31,8 +41,20 @@ class Game:
             for x in range(1700, 1900, 50):
                 self.platforms.add(SnowPlatform((x, 850)))
             for x in range(-500, 2500, 50):
-                self.ground.add(Ground((x, 1030)))
-            self.main_hero.add(Hero((150, 600), self.gravity))
+                self.enemies.add(Ground((x, 1030)))
+            self.finish.add(Finish((1850, 800)))
+            self.main_hero.add(Hero((150, 600), self.gravity, self.program))
+
+    def _groups_update(self):
+        """Метод который обновляет все группы спрайтов"""
+        self.platforms.update(self.world_direction)
+        self.enemies.update(self.world_direction)
+        self.main_hero.update(self.player_direction, self.platforms, self.finish, self.enemies)
+        self.finish.update(self.world_direction)
+        self.platforms.draw(SCREEN)
+        self.enemies.draw(SCREEN)
+        self.main_hero.draw(SCREEN)
+        self.finish.draw(SCREEN)
 
     def render(self, events):
         for event in events:
@@ -68,9 +90,4 @@ class Game:
             self.player_direction = 0
             self.world_direction = 0
         SCREEN.blit(self.background, self.background.get_rect())
-        self.platforms.update(self.world_direction)
-        self.ground.update(self.world_direction)
-        self.main_hero.update(self.player_direction, self.platforms)
-        self.platforms.draw(SCREEN)
-        self.ground.draw(SCREEN)
-        self.main_hero.draw(SCREEN)
+        self._groups_update()

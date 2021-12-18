@@ -8,12 +8,14 @@ class ChristmasJumps:
 
     def __init__(self):
         self.state = "menu_level"  # То что мы будем отображать
-        self.game = Game()  # Игра
-        self.level_menu = LevelMenu(self)
+        self.game = Game(self)  # Игра
+        self.level_menu = LevelMenu(self)  # Меню выбора уровня
 
     def set_state(self, state):
+        """Метод который меняет состояние программы"""
         self.state = state
         if state.split("_")[0] == "level":
+            # Если мы показываем уровень то составляем уровень
             self.game.set_level(state.split("_")[1])
 
     def _render(self, events):
