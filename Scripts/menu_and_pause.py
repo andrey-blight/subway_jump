@@ -7,7 +7,7 @@ class AbstractMenu:
 
     def __init__(self, program):
         self.program = program
-        self.background = pygame.image.load(r"..\Images\menu_background.jpg")
+        self.background = pygame.image.load(r"..\Images\menu_background.jpg").convert_alpha()
         self.buttons = pygame.sprite.Group()
 
     def render(self, events, brightness):
@@ -30,6 +30,8 @@ class MainMenu(AbstractMenu):
 
     def __init__(self, program):
         super(MainMenu, self).__init__(program)
+        font = pygame.font.SysFont("Roboto", 100)
+        self.text = font.render('Christmas jumps', True, (34, 139, 34)).convert_alpha()
         self._set_buttons()  # размещаем кнопки
 
     def _set_buttons(self):
@@ -40,10 +42,8 @@ class MainMenu(AbstractMenu):
     def render(self, events, brightness):
         super(MainMenu, self).render(events, brightness)
         # Настройки шрифта
-        font = pygame.font.SysFont("Roboto", 100)
-        text = font.render('Christmas jumps', True, (34, 139, 34))
-        text.set_alpha(brightness)
-        SCREEN.blit(text, (1920 // 2 - text.get_width() // 2, 75))  # Отображение текста ровно посередине
+        self.text.set_alpha(brightness)
+        SCREEN.blit(self.text, (1920 // 2 - self.text.get_width() // 2, 75))  # Отображение текста ровно посередине
 
 
 class LevelMenu(AbstractMenu):
@@ -51,6 +51,8 @@ class LevelMenu(AbstractMenu):
 
     def __init__(self, program):
         super(LevelMenu, self).__init__(program)
+        font = pygame.font.SysFont("Roboto", 100)
+        self.text = font.render('Выберите уровень', True, (34, 139, 34)).convert_alpha()
         self._set_buttons(2)  # Задаем количество уровней в программе
 
     def _set_buttons(self, count):
@@ -68,10 +70,8 @@ class LevelMenu(AbstractMenu):
     def render(self, events, brightness):
         super(LevelMenu, self).render(events, brightness)
         # Настройки шрифта
-        font = pygame.font.SysFont("Roboto", 100)
-        text = font.render('Выберите уровень', True, (34, 139, 34))
-        text.set_alpha(brightness)
-        SCREEN.blit(text, (1920 // 2 - text.get_width() // 2, 75))  # Отображение текста
+        self.text.set_alpha(brightness)
+        SCREEN.blit(self.text, (1920 // 2 - self.text.get_width() // 2, 75))  # Отображение текста
 
 
 class AbstractButton(pygame.sprite.Sprite):
@@ -93,17 +93,37 @@ class AbstractButton(pygame.sprite.Sprite):
         self.image = pygame.Surface((self.size[0], self.size[1]), pygame.SRCALPHA, 32)
 
 
+class TextButton(AbstractButton):
+    """Класс текстовой кнопки"""
+
+    def __init__(self, height, text, state):
+        font = pygame.font.SysFont("Roboto", 80)
+        self.text = font.render(text, True, (211, 255, 94)).convert_alpha()
+        super().__init__((1920 // 2 - self.text.get_width() // 2, height), self.text.get_size())
+        self.image.blit(self.text, (0, 0))
+        self.state = state
+
+    def clicked(self, x, y):
+        if super(TextButton, self).clicked(x, y):
+            return self.state
+
+    def update(self, brightness):
+        super(TextButton, self).update(brightness)
+        self.text.set_alpha(brightness)
+        self.image.blit(self.text, (0, 0))
+
+
 class LevelSprite(AbstractButton):
     """Класс иконки с уровнем"""
     SIZE = 100  # Размер одного блока
-    IMAGE = pygame.image.load(r"..\Images\snowflake_level.png")
+    IMAGE = pygame.image.load(r"..\Images\snowflake_level.png").convert_alpha()
 
     def __init__(self, pos, number):
         super().__init__(pos, (self.SIZE, self.SIZE))
         self.level = number  # Номер уровня
         self.image.blit(self.IMAGE, (0, 0))  # Добавляем изображение
         font = pygame.font.SysFont("Roboto", 60)
-        self.text = font.render(f'{number}', True, (211, 255, 94))
+        self.text = font.render(f'{number}', True, (211, 255, 94)).convert_alpha()
         # Размещаем номер уровня ровно по центру снежинки
         self.image.blit(self.text, (100 // 2 - self.text.get_width() // 2,
                                     100 // 2 - self.text.get_height() // 2))
@@ -122,30 +142,10 @@ class LevelSprite(AbstractButton):
                                     100 // 2 - self.text.get_height() // 2))
 
 
-class TextButton(AbstractButton):
-    """Класс текстовой кнопки"""
-
-    def __init__(self, height, text, state):
-        font = pygame.font.SysFont("Roboto", 80)
-        self.text = font.render(text, True, (211, 255, 94))
-        super().__init__((1920 // 2 - self.text.get_width() // 2, height), self.text.get_size())
-        self.image.blit(self.text, (0, 0))
-        self.state = state
-
-    def clicked(self, x, y):
-        if super(TextButton, self).clicked(x, y):
-            return self.state
-
-    def update(self, brightness):
-        super(TextButton, self).update(brightness)
-        self.text.set_alpha(brightness)
-        self.image.blit(self.text, (0, 0))
-
-
 class BackButton(AbstractButton):
     """Класс кнопки назад"""
     SIZE = 100  # Размер одного блока
-    IMAGE = pygame.image.load(r"..\Images\back.png")
+    IMAGE = pygame.image.load(r"..\Images\back.png").convert_alpha()
 
     def __init__(self, pos, state):
         super().__init__(pos, (self.SIZE, self.SIZE))

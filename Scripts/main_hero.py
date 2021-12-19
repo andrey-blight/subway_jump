@@ -7,6 +7,7 @@ class Hero(pygame.sprite.Sprite):
         self.program = program
         self.image = pygame.Surface((25, 50))
         self.image.fill('red')
+        self.image.convert_alpha()
         self.rect = self.image.get_rect(topleft=pos)
         #               ФИЗИКА
         self.speed_x = 0  # Скорость по горизонтали
@@ -34,7 +35,10 @@ class Hero(pygame.sprite.Sprite):
             value = False
         self.jump = value
 
-    def update(self, direction, platforms, finish, enemies):
+    def update(self, direction, brightness, platforms, finish, enemies):
+        self.image.set_alpha(brightness)
+        if brightness < 255:
+            return
         if pygame.sprite.spritecollide(self, finish, False):
             self.program.set_state("menu_level")  # Если дошли до финиша
         if pygame.sprite.spritecollide(self, enemies, False):

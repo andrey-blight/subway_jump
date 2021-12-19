@@ -27,7 +27,7 @@ class ChristmasJumps:
     def _render(self, events):
         state = self.state.split("_")
         if state[0] == "level":  # Если состояние игра то запускаем игру
-            self.game.render(events)
+            self.game.render(events, self.brightness)
         elif state[0] == "menu":
             if state[1] == "level":
                 self.level_menu.render(events, self.brightness)  # Отрисовка меню с уровнями
@@ -36,7 +36,7 @@ class ChristmasJumps:
         elif state[0] == "quite":
             self.running = False
         if self.brightness < 255:
-            self.brightness += 1500 / FPS
+            self.brightness += 500 / FPS
             self.brightness = min(255, self.brightness)
 
     def start_game(self):

@@ -5,7 +5,7 @@ from main_hero import Hero
 class Game:
     def __init__(self, program):
         self.program = program
-        self.background = pygame.image.load(r"..\Images\background.jpg")
+        self.background = pygame.image.load(r"..\Images\background.jpg").convert_alpha()
         self.move = ""  # Направление движения
         self.world_direction = 0  # Направление изменения мира (0 на месте, 1 направо, -1 налево)
         self.player_direction = 0  # Направление движения игрока по оси x (0 на месте, 1 направо, -1 налево)
@@ -43,51 +43,54 @@ class Game:
             for x in range(-500, 2500, 50):
                 self.enemies.add(Ground((x, 1030)))
             self.finish.add(Finish((1850, 800)))
-            self.main_hero.add(Hero((150, 600), self.gravity, self.program))
+            self.main_hero.add(Hero((150, 550), self.gravity, self.program))
 
-    def _groups_update(self):
+    def _groups_update(self, brightness):
         """Метод который обновляет все группы спрайтов"""
-        self.platforms.update(self.world_direction)
-        self.enemies.update(self.world_direction)
-        self.main_hero.update(self.player_direction, self.platforms, self.finish, self.enemies)
-        self.finish.update(self.world_direction)
+        self.platforms.update(self.world_direction, brightness)
+        self.enemies.update(self.world_direction, brightness)
+        self.finish.update(self.world_direction, brightness)
+        self.main_hero.update(self.player_direction, brightness, self.platforms, self.finish, self.enemies)
         self.platforms.draw(SCREEN)
         self.enemies.draw(SCREEN)
-        self.main_hero.draw(SCREEN)
         self.finish.draw(SCREEN)
+        self.main_hero.draw(SCREEN)
 
-    def render(self, events):
-        for event in events:
-            if self.gravity == "down":
-                if event.type == pygame.KEYDOWN and event.key in [pygame.K_d, pygame.K_RIGHT]:
-                    self.move = "right"  # Если нажата стрелочка направо или d то движемся направо
-                if event.type == pygame.KEYDOWN and event.key in [pygame.K_a, pygame.K_LEFT]:
-                    self.move = "left"  # Если нажата стрелка влево или a то движемся влево
-                if event.type == pygame.KEYUP and event.key in [pygame.K_d, pygame.K_RIGHT, pygame.K_a, pygame.K_LEFT]:
-                    self.move = ""  # Если отпустили кнопку то не движемся
-                if event.type == pygame.KEYDOWN and (event.key in [pygame.K_SPACE, pygame.K_w, pygame.K_UP]):
-                    self.main_hero.sprite.set_jump(True, self.platforms)  # Устанавливаем главному герою прыжок
-        if self.move == "right":
-            if self.main_hero.sprite.get_cords()[0] <= 1440:
-                # Если движимся направо и игрок не дошел до определенной границы то перемещаем персонажа
-                self.player_direction = 1
-                self.world_direction = 0
+    def render(self, events, brightness):
+        if brightness >= 255:
+            for event in events:
+                if self.gravity == "down":
+                    if event.type == pygame.KEYDOWN and event.key in [pygame.K_d, pygame.K_RIGHT]:
+                        self.move = "right"  # Если нажата стрелочка направо или d то движемся направо
+                    if event.type == pygame.KEYDOWN and event.key in [pygame.K_a, pygame.K_LEFT]:
+                        self.move = "left"  # Если нажата стрелка влево или a то движемся влево
+                    if event.type == pygame.KEYUP and event.key in [pygame.K_d, pygame.K_RIGHT, pygame.K_a,
+                                                                    pygame.K_LEFT]:
+                        self.move = ""  # Если отпустили кнопку то не движемся
+                    if event.type == pygame.KEYDOWN and (event.key in [pygame.K_SPACE, pygame.K_w, pygame.K_UP]):
+                        self.main_hero.sprite.set_jump(True, self.platforms)  # Устанавливаем главному герою прыжок
+            if self.move == "right":
+                if self.main_hero.sprite.get_cords()[0] <= 1440:
+                    # Если движимся направо и игрок не дошел до определенной границы то перемещаем персонажа
+                    self.player_direction = 1
+                    self.world_direction = 0
+                else:
+                    # Если игрок перешел границу то двигаем мир
+                    self.player_direction = 0
+                    self.world_direction = 1
+            elif self.move == "left":
+                if 480 <= self.main_hero.sprite.get_cords()[0]:
+                    # Если движимся налево и игрок не дошел до определенной границы то перемещаем персонажа
+                    self.player_direction = -1
+                    self.world_direction = 0
+                else:
+                    # Если игрок перешел границу то двигаем мир
+                    self.player_direction = 0
+                    self.world_direction = -1
             else:
-                # Если игрок перешел границу то двигаем мир
+                # Если не движимся то убрать все направления
                 self.player_direction = 0
-                self.world_direction = 1
-        elif self.move == "left":
-            if 480 <= self.main_hero.sprite.get_cords()[0]:
-                # Если движимся налево и игрок не дошел до определенной границы то перемещаем персонажа
-                self.player_direction = -1
                 self.world_direction = 0
-            else:
-                # Если игрок перешел границу то двигаем мир
-                self.player_direction = 0
-                self.world_direction = -1
-        else:
-            # Если не движимся то убрать все направления
-            self.player_direction = 0
-            self.world_direction = 0
+        self.background.set_alpha(brightness)
         SCREEN.blit(self.background, self.background.get_rect())
-        self._groups_update()
+        self._groups_update(brightness)

@@ -36,7 +36,7 @@ class StandardBlock(pygame.sprite.Sprite):
         self.x = pos[0]
         self.y = pos[1]
 
-    def update(self, x_direction):
+    def update(self, x_direction, brightness):
         if x_direction == 1:
             self.rect.move_ip(-SIDE_SPEED, 0)
         elif x_direction == -1:
@@ -45,7 +45,7 @@ class StandardBlock(pygame.sprite.Sprite):
 
 class SnowPlatform(StandardBlock):
     """Обычная платформа на которой может находиться герой"""
-    IMAGE = pygame.image.load(r"..\Images\standard_platform.png")
+    IMAGE = pygame.image.load(r"..\Images\standard_platform.png").convert_alpha()
 
     def __init__(self, pos):
         super().__init__(pos)
@@ -57,24 +57,33 @@ class SnowPlatform(StandardBlock):
     def get_top_border(self):
         return self.top_border
 
-    def update(self, x_direction):
-        super(SnowPlatform, self).update(x_direction)
+    def update(self, x_direction, brightness):
+        super(SnowPlatform, self).update(x_direction, brightness)
         self.top_border.update(x_direction, 0)
+        self.image.set_alpha(brightness)
 
 
 class Ground(StandardBlock):
     """Класс земли которого нельзя касаться"""
-    IMAGE = pygame.image.load(r"..\Images\ground.jpg")
+    IMAGE = pygame.image.load(r"..\Images\ground.jpg").convert_alpha()
 
     def __init__(self, pos):
         super().__init__(pos)
         self.image = self.IMAGE
+
+    def update(self, x_direction, brightness):
+        super(Ground, self).update(x_direction, brightness)
+        self.image.set_alpha(brightness)
 
 
 class Finish(StandardBlock):
     """Класс финиша при касание которого уровень проходится"""
-    IMAGE = pygame.image.load(r"..\Images\finish.png")
+    IMAGE = pygame.image.load(r"..\Images\finish.png").convert_alpha()
 
     def __init__(self, pos):
         super().__init__(pos)
         self.image = self.IMAGE
+
+    def update(self, x_direction, brightness):
+        super(Finish, self).update(x_direction, brightness)
+        self.image.set_alpha(brightness)
