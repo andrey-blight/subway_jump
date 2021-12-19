@@ -2,15 +2,19 @@ import pygame
 from Scripts.game import Game
 from menu_and_pause import *
 
+pygame.init()  # Инициализируем pygame в начале чтобы работали шрифты во время инициализации классов меню
+
 
 class ChristmasJumps:
     """Класс со всей игровой логикой"""
 
     def __init__(self):
-        self.state = "menu_level"  # То что мы будем отображать
+        self.state = "menu_main"  # То что мы будем отображать
         self.game = Game(self)  # Игра
         self.level_menu = LevelMenu(self)  # Меню выбора уровня
+        self.main_menu = MainMenu(self)
         self.brightness = 0  # Яркость
+        self.running = True
 
     def set_state(self, state):
         """Метод который меняет состояние программы"""
@@ -27,20 +31,22 @@ class ChristmasJumps:
         elif state[0] == "menu":
             if state[1] == "level":
                 self.level_menu.render(events, self.brightness)  # Отрисовка меню с уровнями
+            elif state[1] == "main":
+                self.main_menu.render(events, self.brightness)  # Отрисовка главного
+        elif state[0] == "quite":
+            self.running = False
         if self.brightness < 255:
-            self.brightness += 765 / FPS
+            self.brightness += 1500 / FPS
             self.brightness = min(255, self.brightness)
 
     def start_game(self):
         """Главный игровой цикл"""
-        pygame.init()
         clock = pygame.time.Clock()
-        running = True
-        while running:
+        while self.running:
             events = pygame.event.get()
             for event in events:
                 if event.type == pygame.QUIT:
-                    running = False
+                    self.running = False
             self._render(events)
             clock.tick(FPS)
             pygame.display.flip()
