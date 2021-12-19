@@ -32,7 +32,7 @@ class ChristmasJumps:
             if state[1] == "level":
                 self.level_menu.render(events, self.brightness)  # Отрисовка меню с уровнями
             elif state[1] == "main":
-                self.main_menu.render(events, self.brightness)  # Отрисовка главного
+                self.main_menu.render(events, self.brightness)  # Отрисовка главного меню
         elif state[0] == "quite":
             self.running = False
         if self.brightness < 255:
@@ -49,5 +49,6 @@ class ChristmasJumps:
                     self.running = False
             self._render(events)
             clock.tick(FPS)
+            print(clock.get_fps())
             pygame.display.flip()
         pygame.quit()

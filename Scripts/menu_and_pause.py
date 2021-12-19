@@ -118,10 +118,8 @@ class LevelSprite(AbstractButton):
         self.IMAGE.set_alpha(brightness)
         self.text.set_alpha(brightness)
         self.image.blit(self.IMAGE, (0, 0))
-        if self.level >= 10:
-            self.image.blit(self.text, (25, 35))
-        else:
-            self.image.blit(self.text, (35, 35))
+        self.image.blit(self.text, (100 // 2 - self.text.get_width() // 2,
+                                    100 // 2 - self.text.get_height() // 2))
 
 
 class TextButton(AbstractButton):
