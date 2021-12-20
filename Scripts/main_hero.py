@@ -1,4 +1,5 @@
 from constants import *
+from platforms import Ground
 
 
 class Hero(pygame.sprite.Sprite):
@@ -41,8 +42,11 @@ class Hero(pygame.sprite.Sprite):
             return
         if pygame.sprite.spritecollide(self, finish, False):
             self.program.set_state("menu_level")  # Если дошли до финиша
-        if pygame.sprite.spritecollide(self, enemies, False):
-            self.program.set_state("menu_level")  # Если погибли
+        if enemy := pygame.sprite.spritecollide(self, enemies, False) or self.rect.y > HEIGHT:
+            message = "None"
+            if type(enemy[0]) == Ground or self.rect.y > HEIGHT:
+                message = "Вы упали на землю"
+            self.program.set_state("menu_lose", message)  # Если погибли
         self.rect.move_ip(self.speed_x, self.speed_y)  # Перемещение по с заданными скоростями
         # Получаем список всех границ на которых стоит главный герой
         collide_border = self.get_collide_borders(platforms)

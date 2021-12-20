@@ -30,6 +30,10 @@ class Game:
             self._clear_game()
             for x in range(100, 301, 50):
                 self.platforms.add(SnowPlatform((x, 600)))
+            self.platforms.add(SnowPlatform((520, 800)))
+            self.platforms.add(SnowPlatform((-100, 900)))
+            for x in range(150, 300, 50):
+                self.platforms.add(SnowPlatform((x, 900)))
             for x in range(470, 650, 50):
                 self.platforms.add(SnowPlatform((x, 400)))
             for x in range(1000, 1150, 50):
@@ -79,7 +83,7 @@ class Game:
                     self.player_direction = 0
                     self.world_direction = 1
             elif self.move == "left":
-                if 480 <= self.main_hero.sprite.get_cords()[0]:
+                if 400 <= self.main_hero.sprite.get_cords()[0]:
                     # Если движимся налево и игрок не дошел до определенной границы то перемещаем персонажа
                     self.player_direction = -1
                     self.world_direction = 0

@@ -52,7 +52,8 @@ class SnowPlatform(StandardBlock):
         self.image = self.IMAGE
         # Добавляем верхнюю границу для блока
         self.top_border = pygame.sprite.GroupSingle()
-        self.top_border.add(BlockBorder(self.x, self.y - 1, self.x + StandardBlock.BLOCK_SIZE, self.y, self))
+        self.top_border.add(
+            BlockBorder(self.x + 1, self.y - 1, self.x + StandardBlock.BLOCK_SIZE - 1, self.y - 1, self))
 
     def get_top_border(self):
         return self.top_border
@@ -61,6 +62,7 @@ class SnowPlatform(StandardBlock):
         super(SnowPlatform, self).update(x_direction, brightness)
         self.top_border.update(x_direction, 0)
         self.image.set_alpha(brightness)
+        self.top_border.draw(SCREEN)
 
 
 class Ground(StandardBlock):

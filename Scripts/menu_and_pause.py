@@ -43,7 +43,32 @@ class MainMenu(AbstractMenu):
         super(MainMenu, self).render(events, brightness)
         # Настройки шрифта
         self.text.set_alpha(brightness)
-        SCREEN.blit(self.text, (1920 // 2 - self.text.get_width() // 2, 75))  # Отображение текста ровно посередине
+        SCREEN.blit(self.text, (WIDTH // 2 - self.text.get_width() // 2, 75))  # Отображение текста ровно посередине
+
+
+class GameOverMenu(AbstractMenu):
+    """Класс главного меню """
+
+    def __init__(self, program):
+        super(GameOverMenu, self).__init__(program)
+        self.font = pygame.font.SysFont("Roboto", 100)
+        self.text = self.font.render('', True, (255, 36, 0)).convert_alpha()
+        self._set_buttons()  # размещаем кнопки
+
+    def set_message(self, message):
+        self.text = self.font.render(message, True, (255, 36, 0)).convert_alpha()
+
+    def _set_buttons(self):
+        self.buttons.add(TextButton(275, "Начать заново", "restart"))
+        self.buttons.add(TextButton(425, "Выбрать уровень", "menu_level"))
+        self.buttons.add(TextButton(575, "Выйти в главное меню", "menu_main"))
+        self.buttons.add(TextButton(725, "Выйти из игры", "quite"))
+
+    def render(self, events, brightness):
+        super(GameOverMenu, self).render(events, brightness)
+        # Настройки шрифта
+        self.text.set_alpha(brightness)
+        SCREEN.blit(self.text, (WIDTH // 2 - self.text.get_width() // 2, 75))  # Отображение текста ровно посередине
 
 
 class LevelMenu(AbstractMenu):
@@ -99,7 +124,7 @@ class TextButton(AbstractButton):
     def __init__(self, height, text, state):
         font = pygame.font.SysFont("Roboto", 80)
         self.text = font.render(text, True, (211, 255, 94)).convert_alpha()
-        super().__init__((1920 // 2 - self.text.get_width() // 2, height), self.text.get_size())
+        super().__init__((WIDTH // 2 - self.text.get_width() // 2, height), self.text.get_size())
         self.image.blit(self.text, (0, 0))
         self.state = state
 

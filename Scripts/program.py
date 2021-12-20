@@ -10,18 +10,23 @@ class ChristmasJumps:
 
     def __init__(self):
         self.state = "menu_main"  # То что мы будем отображать
+        self.last_level = None
         self.game = Game(self)  # Игра
         self.level_menu = LevelMenu(self)  # Меню выбора уровня
-        self.main_menu = MainMenu(self)
+        self.main_menu = MainMenu(self)  # Главное меню
+        self.game_over = GameOverMenu(self)  # Меню проигрыша
         self.brightness = 0  # Яркость
         self.running = True
 
-    def set_state(self, state):
+    def set_state(self, state, message=None):
         """Метод который меняет состояние программы"""
         self.state = state
         if state.split("_")[0] == "level":
             # Если мы показываем уровень то составляем уровень
             self.game.set_level(state.split("_")[1])
+            self.last_level = state
+        elif state.split("_")[0] == "menu" and state.split("_")[1]:
+            self.game_over.set_message(message)
         self.brightness = 0
 
     def _render(self, events):
@@ -33,8 +38,12 @@ class ChristmasJumps:
                 self.level_menu.render(events, self.brightness)  # Отрисовка меню с уровнями
             elif state[1] == "main":
                 self.main_menu.render(events, self.brightness)  # Отрисовка главного меню
+            elif state[1] == "lose":
+                self.game_over.render(events, self.brightness)
         elif state[0] == "quite":
             self.running = False
+        elif state[0] == "restart":
+            self.set_state(self.last_level)
         if self.brightness < 255:
             self.brightness += 500 / FPS
             self.brightness = min(255, self.brightness)
