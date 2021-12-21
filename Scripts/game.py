@@ -4,7 +4,7 @@ from main_hero import Hero
 
 class Game:
     def __init__(self, program):
-        self.program = program
+        self.program = program  # Программа, в которой мы будем менять состояние
         self.background = pygame.image.load(r"..\Images\background.jpg").convert_alpha()
         self.move = ""  # Направление движения
         self.world_direction = 0  # Направление изменения мира (0 на месте, 1 направо, -1 налево)
@@ -61,6 +61,7 @@ class Game:
         self.main_hero.draw(SCREEN)
 
     def render(self, events, brightness):
+        # Реагируем на нажатия клавиш только в случае если меню полностью прогрузилось
         if brightness >= 255:
             for event in events:
                 if self.gravity == "down":
@@ -95,6 +96,6 @@ class Game:
                 # Если не движимся то убрать все направления
                 self.player_direction = 0
                 self.world_direction = 0
-        self.background.set_alpha(brightness)
+        self.background.set_alpha(brightness)  # Устанавливаем яркость
         SCREEN.blit(self.background, self.background.get_rect())
         self._groups_update(brightness)

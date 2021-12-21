@@ -16,7 +16,8 @@ class Hero(pygame.sprite.Sprite):
         self.speed_y = 0  # Скорость по вертикали
         self.gravity = gravity  # Направление гравитации
         self.jump = False  # Прыжок персонажа
-        self.top_border = pygame.sprite.GroupSingle()  # Граница головы
+        # Задаем границы для подсчета колизий главного игрока
+        self.top_border = pygame.sprite.GroupSingle()
         self.down_border = pygame.sprite.GroupSingle()
         self.left_border = pygame.sprite.GroupSingle()
         self.right_border = pygame.sprite.GroupSingle()
@@ -39,28 +40,20 @@ class Hero(pygame.sprite.Sprite):
         return self.rect.x, self.rect.y
 
     def is_ground(self):
-        """Метод который возвращает платформу, на которой стоит главный герой"""
-        if self.gravity == "down":
-            # Если гравитация направлена вниз, то формируем все границы платформ
-            return pygame.sprite.spritecollideany(self.down_border.sprite, self.platforms)
+        """Метод который возвращает платформу снизу игрока"""
+        return pygame.sprite.spritecollideany(self.down_border.sprite, self.platforms)
 
     def is_ceiling(self):
-        """Метод который возвращает платформу в которую попал игрок прыгая"""
-        if self.gravity == "down":
-            # Если гравитация направлена вниз, то формируем все границы платформ
-            return pygame.sprite.spritecollideany(self.top_border.sprite, self.platforms)
+        """Метод который возвращает платформу сверху игрока"""
+        return pygame.sprite.spritecollideany(self.top_border.sprite, self.platforms)
 
     def is_left(self):
-        """Метод который возвращает блатформу в которых врезался """
-        if self.gravity == "down":
-            # Если гравитация направлена вниз, то формируем все границы платформ
-            return pygame.sprite.spritecollideany(self.left_border.sprite, self.platforms)
+        """Метод который возвращает блатформу левее игрока"""
+        return pygame.sprite.spritecollideany(self.left_border.sprite, self.platforms)
 
     def is_right(self):
-        """Метод который возвращает блатформу в которых врезался """
-        if self.gravity == "down":
-            # Если гравитация направлена вниз, то формируем все границы платформ
-            return pygame.sprite.spritecollideany(self.right_border.sprite, self.platforms)
+        """Метод который возвращает блатформу правее игрока"""
+        return pygame.sprite.spritecollideany(self.right_border.sprite, self.platforms)
 
     def set_jump(self, value):
         """Метод который устанавливает герою значение прыжка"""
@@ -80,24 +73,27 @@ class Hero(pygame.sprite.Sprite):
         self.right_border.draw(SCREEN)
 
     def update(self, direction, brightness, finish, enemies):
-        self.image.set_alpha(brightness)
-        if brightness < 255:
+        self.image.set_alpha(brightness)  # Установка яркости
+        if brightness < 255:  # Если мы в процессе отрисовки то больше ничего не делаем
             return
         if pygame.sprite.spritecollide(self, finish, False):
-            self.program.set_state("menu_level")  # Если дошли до финиша
-        if enemy := pygame.sprite.spritecollide(self, enemies, False) or self.rect.y > HEIGHT:
+            self.program.set_state("menu_level")  # Если дошли до финиша то выходим в главное меню
+        if enemy := pygame.sprite.spritecollideany(self, enemies) or self.rect.y > HEIGHT:
+            # Если погибли то отображаем окно проигрыша с причиной смерти,
             message = "None"
             if type(enemy[0]) == Ground or self.rect.y > HEIGHT:
                 message = "Вы упали на землю"
-            self.program.set_state("menu_lose", message)  # Если погибли
+            self.program.set_state("menu_lose", message)
         self.rect.move_ip(self.speed_x, self.speed_y)  # Перемещение по с заданными скоростями
-        self.move_border(self.speed_x, self.speed_y)
+        self.move_border(self.speed_x, self.speed_y)  # Двигаем невидимую рамку вслед за персонажем
+        # Получаем объекты в которые мы попали с каждой стороны
         ground_block = self.is_ground()
         ceiling_block = self.is_ceiling()
         left_block = self.is_left()
         right_block = self.is_right()
         if self.gravity == "down":
             if ceiling_block:
+                # Если попали на блок всерху то не даем прыгнуть выше
                 y = self.rect.y
                 self.rect.y = ceiling_block.get_coords()[1] + StandardBlock.BLOCK_SIZE + 1
                 self.speed_y = 0
@@ -116,17 +112,18 @@ class Hero(pygame.sprite.Sprite):
                     self.speed_y = 0
                     if self.rect.y != y:
                         self.set_borders()
-
             else:
                 # Добавляем ускорение свободного падения если нет опоры
                 self.speed_y += G
             if right_block:
+                # Не даем пройти дальше вправо если там блок
                 x = self.rect.x
                 self.rect.x = right_block.get_coords()[0] - self.rect.width
                 self.speed_x = 0
                 if self.rect.x != x:
                     self.set_borders()
             if left_block:
+                # Не даем пройти дальше влево если там блок
                 x = self.rect.x
                 self.rect.x = left_block.get_coords()[0] + StandardBlock.BLOCK_SIZE
                 self.speed_x = 0
@@ -137,4 +134,4 @@ class Hero(pygame.sprite.Sprite):
             elif direction == -1:  # Движение налево
                 self.speed_x = -SIDE_SPEED
             else:
-                self.speed_x = 0
+                self.speed_x = 0  # Стоим на месте

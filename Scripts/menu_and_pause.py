@@ -11,16 +11,18 @@ class AbstractMenu:
         self.buttons = pygame.sprite.Group()
 
     def render(self, events, brightness):
-        if brightness >= 255:  # Реагируем только когда прошла полная анимация
+        # Проверяем нажатия только после полной отрисовки меню
+        if brightness >= 255:
             for event in events:
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     for el in self.buttons.sprites():
-                        # Если мышка попала на уровень, то получаем название режима
+                        # Если мышка попала на уровень, то получаем название режима и передаем его в программу
                         state = el.clicked(*pygame.mouse.get_pos())
                         if state:
-                            self.program.set_state(state)  # Меняем режим игры
-        self.background.set_alpha(brightness)
+                            self.program.set_state(state)
+        self.background.set_alpha(brightness)  # Ставим прозрачность
         SCREEN.blit(self.background, self.background.get_rect())  # Отображение заднего фона
+        # обновляем все что есть на экране и рисуем
         self.buttons.update(brightness)
         self.buttons.draw(SCREEN)
 
@@ -56,6 +58,7 @@ class GameOverMenu(AbstractMenu):
         self._set_buttons()  # размещаем кнопки
 
     def set_message(self, message):
+        """Метод, который устанавливает заголовок проигрыша"""
         self.text = self.font.render(message, True, (255, 36, 0)).convert_alpha()
 
     def _set_buttons(self):
@@ -78,9 +81,9 @@ class LevelMenu(AbstractMenu):
         super(LevelMenu, self).__init__(program)
         font = pygame.font.SysFont("Roboto", 100)
         self.text = font.render('Выберите уровень', True, (34, 139, 34)).convert_alpha()
-        self._set_buttons(2)  # Задаем количество уровней в программе
+        self._set_levels(2)
 
-    def _set_buttons(self, count):
+    def _set_levels(self, count):
         """Метод, который создает заданное количество уровней"""
         x = 100
         y = 275
@@ -94,9 +97,8 @@ class LevelMenu(AbstractMenu):
 
     def render(self, events, brightness):
         super(LevelMenu, self).render(events, brightness)
-        # Настройки шрифта
         self.text.set_alpha(brightness)
-        SCREEN.blit(self.text, (1920 // 2 - self.text.get_width() // 2, 75))  # Отображение текста
+        SCREEN.blit(self.text, (1920 // 2 - self.text.get_width() // 2, 75))  # Отображение текста ровно посередине
 
 
 class AbstractButton(pygame.sprite.Sprite):
@@ -115,18 +117,20 @@ class AbstractButton(pygame.sprite.Sprite):
         return False
 
     def update(self, brightness):
+        # В апдейте просто очищаем наш surface
         self.image = pygame.Surface((self.size[0], self.size[1]), pygame.SRCALPHA, 32)
 
 
 class TextButton(AbstractButton):
-    """Класс текстовой кнопки"""
+    """Класс кнопки с текстом"""
 
     def __init__(self, height, text, state):
         font = pygame.font.SysFont("Roboto", 80)
         self.text = font.render(text, True, (211, 255, 94)).convert_alpha()
+        # Вызываем родительский инициализатор так чтобы он разместил image ровно по центру экрана
         super().__init__((WIDTH // 2 - self.text.get_width() // 2, height), self.text.get_size())
         self.image.blit(self.text, (0, 0))
-        self.state = state
+        self.state = state  # Состояние игры на которое переносит эта кнопка
 
     def clicked(self, x, y):
         if super(TextButton, self).clicked(x, y):
@@ -134,7 +138,7 @@ class TextButton(AbstractButton):
 
     def update(self, brightness):
         super(TextButton, self).update(brightness)
-        self.text.set_alpha(brightness)
+        self.text.set_alpha(brightness)  # Установка яркости
         self.image.blit(self.text, (0, 0))
 
 
