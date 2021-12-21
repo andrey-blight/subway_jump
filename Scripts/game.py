@@ -47,14 +47,14 @@ class Game:
             for x in range(-500, 2500, 50):
                 self.enemies.add(Ground((x, 1030)))
             self.finish.add(Finish((1850, 800)))
-            self.main_hero.add(Hero((150, 550), self.gravity, self.program))
+            self.main_hero.add(Hero((150, 550), self.gravity, self.program, self.platforms))
 
     def _groups_update(self, brightness):
         """Метод который обновляет все группы спрайтов"""
         self.platforms.update(self.world_direction, brightness)
         self.enemies.update(self.world_direction, brightness)
         self.finish.update(self.world_direction, brightness)
-        self.main_hero.update(self.player_direction, brightness, self.platforms, self.finish, self.enemies)
+        self.main_hero.update(self.player_direction, brightness, self.finish, self.enemies)
         self.platforms.draw(SCREEN)
         self.enemies.draw(SCREEN)
         self.finish.draw(SCREEN)
@@ -72,7 +72,7 @@ class Game:
                                                                     pygame.K_LEFT]:
                         self.move = ""  # Если отпустили кнопку то не движемся
                     if event.type == pygame.KEYDOWN and (event.key in [pygame.K_SPACE, pygame.K_w, pygame.K_UP]):
-                        self.main_hero.sprite.set_jump(True, self.platforms)  # Устанавливаем главному герою прыжок
+                        self.main_hero.sprite.set_jump(True)  # Устанавливаем главному герою прыжок
             if self.move == "right":
                 if self.main_hero.sprite.get_cords()[0] <= 1440:
                     # Если движимся направо и игрок не дошел до определенной границы то перемещаем персонажа
