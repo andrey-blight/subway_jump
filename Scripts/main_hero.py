@@ -81,7 +81,7 @@ class Hero(pygame.sprite.Sprite):
         if enemy := pygame.sprite.spritecollideany(self, enemies) or self.rect.y > HEIGHT:
             # Если погибли то отображаем окно проигрыша с причиной смерти,
             message = "None"
-            if type(enemy[0]) == Ground or self.rect.y > HEIGHT:
+            if type(enemy) == Ground or self.rect.y > HEIGHT:
                 message = "Вы упали на землю"
             self.program.set_state("menu_lose", message)
         self.rect.move_ip(self.speed_x, self.speed_y)  # Перемещение по с заданными скоростями
