@@ -1,20 +1,59 @@
+import time
 from constants import *
 from platforms import *
+from bonuses import *
 
 
 class Hero(pygame.sprite.Sprite):
-    def __init__(self, pos, gravity, program, platforms):
+    STAND_IMG = pygame.image.load(r"../Images/MainHeroStand/1.png").convert_alpha()
+    RIGHT_IMGS = [pygame.image.load(r"../Images/MainHeroGoRight/1.png").convert_alpha(),
+                  pygame.image.load(r"../Images/MainHeroGoRight/2.png").convert_alpha(),
+                  pygame.image.load(r"../Images/MainHeroGoRight/3.png").convert_alpha(),
+                  pygame.image.load(r"../Images/MainHeroGoRight/4.png").convert_alpha(),
+                  pygame.image.load(r"../Images/MainHeroGoRight/5.png").convert_alpha(),
+                  pygame.image.load(r"../Images/MainHeroGoRight/6.png").convert_alpha(),
+                  pygame.image.load(r"../Images/MainHeroGoRight/7.png").convert_alpha(),
+                  pygame.image.load(r"../Images/MainHeroGoRight/8.png").convert_alpha()]
+    LEFT_IMGS = [pygame.image.load(r"../Images/MainHeroGoLeft/1.png").convert_alpha(),
+                 pygame.image.load(r"../Images/MainHeroGoLeft/2.png").convert_alpha(),
+                 pygame.image.load(r"../Images/MainHeroGoLeft/3.png").convert_alpha(),
+                 pygame.image.load(r"../Images/MainHeroGoLeft/4.png").convert_alpha(),
+                 pygame.image.load(r"../Images/MainHeroGoLeft/5.png").convert_alpha(),
+                 pygame.image.load(r"../Images/MainHeroGoLeft/6.png").convert_alpha(),
+                 pygame.image.load(r"../Images/MainHeroGoLeft/7.png").convert_alpha(),
+                 pygame.image.load(r"../Images/MainHeroGoLeft/8.png").convert_alpha()]
+    RIGHT_JUMP_IMGS = [pygame.image.load(r"../Images/MainHeroRightJump/1.png").convert_alpha(),
+                       pygame.image.load(r"../Images/MainHeroRightJump/2.png").convert_alpha(),
+                       pygame.image.load(r"../Images/MainHeroRightJump/3.png").convert_alpha(),
+                       pygame.image.load(r"../Images/MainHeroRightJump/4.png").convert_alpha(),
+                       pygame.image.load(r"../Images/MainHeroRightJump/5.png").convert_alpha(),
+                       pygame.image.load(r"../Images/MainHeroRightJump/6.png").convert_alpha()]
+    LEFT_JUMP_IMGS = [pygame.image.load(r"../Images/MainHeroLeftJump/1.png").convert_alpha(),
+                      pygame.image.load(r"../Images/MainHeroLeftJump/2.png").convert_alpha(),
+                      pygame.image.load(r"../Images/MainHeroLeftJump/3.png").convert_alpha(),
+                      pygame.image.load(r"../Images/MainHeroLeftJump/4.png").convert_alpha(),
+                      pygame.image.load(r"../Images/MainHeroLeftJump/5.png").convert_alpha(),
+                      pygame.image.load(r"../Images/MainHeroLeftJump/6.png").convert_alpha()]
+    JUMP_IMGS = [pygame.image.load(r"../Images/MainHeroJump/1.png").convert_alpha(),
+                 pygame.image.load(r"../Images/MainHeroJump/2.png").convert_alpha(),
+                 pygame.image.load(r"../Images/MainHeroJump/3.png").convert_alpha(),
+                 pygame.image.load(r"../Images/MainHeroJump/4.png").convert_alpha(),
+                 pygame.image.load(r"../Images/MainHeroJump/5.png").convert_alpha(),
+                 pygame.image.load(r"../Images/MainHeroJump/6.png").convert_alpha()]
+
+    def __init__(self, pos, game):
         super().__init__()
-        self.program = program
-        self.image = pygame.Surface((40, 40))
-        self.image.fill('red')
-        self.image.convert_alpha()
+        self.animation = 0
+        self.clear = True
+        self.game = game
+        self.program = game.program
+        self.image = self.STAND_IMG
         self.rect = self.image.get_rect(topleft=pos)
         #               ФИЗИКА
-        self.platforms = platforms
+        self.platforms = game.platforms
         self.speed_x = 0  # Скорость по горизонтали
         self.speed_y = 0  # Скорость по вертикали
-        self.gravity = gravity  # Направление гравитации
+        self.gravity = game.gravity  # Направление гравитации
         self.jump = False  # Прыжок персонажа
         # Задаем границы для подсчета колизий главного игрока
         self.top_border = pygame.sprite.GroupSingle()
@@ -22,6 +61,38 @@ class Hero(pygame.sprite.Sprite):
         self.left_border = pygame.sprite.GroupSingle()
         self.right_border = pygame.sprite.GroupSingle()
         self.set_borders()
+
+    def move(self, direction):
+        self.animation += 1
+        if self.animation > 119:
+            self.animation = 0
+        if direction == "right":
+            if self.gravity == "down":
+                if self.is_ground():
+                    self.image = self.RIGHT_IMGS[self.animation // 15]
+                else:
+                    if self.clear:
+                        self.animation = 0
+                        self.clear = False
+                    self.image = self.RIGHT_JUMP_IMGS[self.animation // 20]
+        elif direction == "left":
+            if self.gravity == "down":
+                if self.is_ground():
+                    self.image = self.LEFT_IMGS[self.animation // 15]
+                else:
+                    if self.clear:
+                        self.animation = 0
+                        self.clear = False
+                    self.image = self.LEFT_JUMP_IMGS[self.animation // 20]
+        elif direction == "stand":
+            if self.gravity == "down":
+                if self.is_ground():
+                    self.image = self.STAND_IMG
+                else:
+                    if self.clear:
+                        self.animation = 0
+                        self.clear = False
+                    self.image = self.JUMP_IMGS[self.animation // 20]
 
     def set_borders(self):
         if self.gravity == "down":
@@ -31,7 +102,7 @@ class Hero(pygame.sprite.Sprite):
                 Border(self.rect.x + 5, self.rect.y + self.rect.height, self.rect.x + self.rect.width - 5,
                        self.rect.y + self.rect.height, 1))
             self.left_border.add(
-                Border(self.rect.x - 1, self.rect.y + 15, self.rect.x - 1, self.rect.y + self.rect.height - 15, 1))
+                Border(self.rect.x - 1, self.rect.y + 10, self.rect.x - 1, self.rect.y + self.rect.height - 25, 1))
             self.right_border.add(
                 Border(self.rect.x + self.rect.width, self.rect.y + 10, self.rect.x + self.rect.width,
                        self.rect.y + self.rect.height - 25, 1))
@@ -57,10 +128,12 @@ class Hero(pygame.sprite.Sprite):
 
     def set_jump(self, value):
         """Метод который устанавливает герою значение прыжка"""
-        if value and not self.is_ground():
+        if value:
             # Если герой находится в воздухе, то мы не можем прыгать
-            value = False
+            if self.gravity == "down" and not self.is_ground():
+                value = False
         self.jump = value
+        self.clear = value
 
     def move_border(self, x, y):
         self.top_border.update(x, y)
@@ -72,18 +145,26 @@ class Hero(pygame.sprite.Sprite):
         self.left_border.draw(SCREEN)
         self.right_border.draw(SCREEN)
 
-    def update(self, direction, brightness, finish, enemies):
+    def update(self, direction, brightness):
         self.image.set_alpha(brightness)  # Установка яркости
         if brightness < 255:  # Если мы в процессе отрисовки то больше ничего не делаем
             return
-        if pygame.sprite.spritecollide(self, finish, False):
-            self.program.set_state("menu_level")  # Если дошли до финиша то выходим в главное меню
-        if enemy := pygame.sprite.spritecollideany(self, enemies) or self.rect.y > HEIGHT:
+        if pygame.sprite.spritecollide(self, self.game.finish, False):
+            # Если дошли до финиша то подсчитываем результат и ставим меню выйгрыша
+            if self.game.level == 1:
+                money = self.game.money_count >= 5
+                b_time = int(time.time() - self.game.start_time) <= 10
+                self.program.set_state("menu_win", ["10", money, b_time, 1])
+        if enemy := pygame.sprite.spritecollideany(self, self.game.enemies) or self.rect.y > HEIGHT:
             # Если погибли то отображаем окно проигрыша с причиной смерти,
             message = "None"
             if type(enemy) == Ground or self.rect.y > HEIGHT:
                 message = "Вы упали на землю"
             self.program.set_state("menu_lose", message)
+        if bonus := pygame.sprite.spritecollideany(self, self.game.bonuses):
+            if type(bonus) == Money:
+                self.game.add_money()  # Если взяли бонус то добавляем монетку
+                bonus.kill()  # Удаляем монетку
         self.rect.move_ip(self.speed_x, self.speed_y)  # Перемещение по с заданными скоростями
         self.move_border(self.speed_x, self.speed_y)  # Двигаем невидимую рамку вслед за персонажем
         # Получаем объекты в которые мы попали с каждой стороны

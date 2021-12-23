@@ -1,5 +1,5 @@
 import pygame
-from Scripts.game import Game
+from game import Game
 from menu_and_pause import *
 
 pygame.init()  # Инициализируем pygame в начале чтобы работали шрифты во время инициализации классов меню
@@ -15,6 +15,7 @@ class ChristmasJumps:
         self.level_menu = LevelMenu(self)
         self.main_menu = MainMenu(self)
         self.game_over = GameOverMenu(self)
+        self.win_menu = GamePassMenu(self)
         self.brightness = 0  # Яркость экрана
         self.running = True  # Флаг, отвечающий за работу программы
 
@@ -28,6 +29,10 @@ class ChristmasJumps:
         elif state.split("_")[0] == "menu" and state.split("_")[1] == "lose":
             # Ставим заголовок проигрыша если нужно отображать меню конца игры
             self.game_over.set_message(message)
+        elif state.split("_")[0] == "menu" and state.split("_")[1] == "win":
+            self.win_menu.set_message(*message)
+        elif state.split("_")[0] == "menu" and state.split("_")[1] == "level":
+            self.level_menu.update()
         self.brightness = 0  # Ставим яркость нулевой для плавного перехода
 
     def _render(self, events):
@@ -41,6 +46,8 @@ class ChristmasJumps:
                 self.main_menu.render(events, self.brightness)
             elif state[1] == "lose":
                 self.game_over.render(events, self.brightness)
+            elif state[1] == "win":
+                self.win_menu.render(events, self.brightness)
         elif state[0] == "quite":
             self.running = False
         elif state[0] == "restart":

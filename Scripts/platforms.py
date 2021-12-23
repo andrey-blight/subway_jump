@@ -23,12 +23,14 @@ class StandardBlock(pygame.sprite.Sprite):
 
     def __init__(self, pos):
         super().__init__()
+        self.image = pygame.surface.Surface((self.BLOCK_SIZE, self.BLOCK_SIZE))
         self.rect = pygame.rect.Rect(pos[0], pos[1], StandardBlock.BLOCK_SIZE, StandardBlock.BLOCK_SIZE)
 
     def get_coords(self):
         return self.rect.x, self.rect.y
 
     def update(self, x_direction, brightness):
+        self.image.set_alpha(brightness)
         if x_direction == 1:
             self.rect.move_ip(-SIDE_SPEED, 0)
         elif x_direction == -1:
@@ -43,10 +45,6 @@ class SnowPlatform(StandardBlock):
         super().__init__(pos)
         self.image = self.IMAGE
 
-    def update(self, x_direction, brightness):
-        super(SnowPlatform, self).update(x_direction, brightness)
-        self.image.set_alpha(brightness)
-
 
 class Ground(StandardBlock):
     """Класс земли которого нельзя касаться"""
@@ -56,10 +54,6 @@ class Ground(StandardBlock):
         super().__init__(pos)
         self.image = self.IMAGE
 
-    def update(self, x_direction, brightness):
-        super(Ground, self).update(x_direction, brightness)
-        self.image.set_alpha(brightness)
-
 
 class Finish(StandardBlock):
     """Класс финиша при касание которого уровень проходится"""
@@ -68,7 +62,3 @@ class Finish(StandardBlock):
     def __init__(self, pos):
         super().__init__(pos)
         self.image = self.IMAGE
-
-    def update(self, x_direction, brightness):
-        super(Finish, self).update(x_direction, brightness)
-        self.image.set_alpha(brightness)
