@@ -31,6 +31,7 @@ class Game:
 
     def _clear_game(self):
         """Метод который очищает все группы и движения"""
+        self.gravity = "down"
         self.start_time = None
         self.time_text = self.font.render('0', True, (34, 139, 34)).convert_alpha()
         self.bonuses = pygame.sprite.Group()  # Все бонусы которые может всять гг
@@ -45,9 +46,9 @@ class Game:
         self.money_count_text = self.font.render(f'{self.money_count}/5', True, (34, 139, 34)).convert_alpha()
 
     def set_level(self, level):
+        self.level = int(level)
+        self._clear_game()
         if level == '1':  # Генерация первого уровня
-            self.level = 1
-            self._clear_game()
             for x in range(100, 301, 50):
                 self.platforms.add(SnowPlatform((x, 600)))
             self.platforms.add(SnowPlatform((520, 800)))
@@ -73,6 +74,35 @@ class Game:
                 self.enemies.add(Ground((x, 1030)))
             self.finish.add(Finish((1850, 800)))
             self.main_hero.add(Hero((150, 540), self))
+        elif level == "2":
+            for x in range(900, 1200, 50):
+                self.platforms.add(SnowPlatform((x, 800)))
+            self.platforms.add(SnowPlatform((1350, 900)))
+            self.bonuses.add(Money((1360, 870)))
+            self.platforms.add(SnowPlatform((1350, 700)))
+            self.bonuses.add(Money((1360, 670)))
+            for x in range(1600, 1800, 50):
+                self.platforms.add(SnowPlatform((x, 800)))
+            self.bonuses.add(Money((1750, 770)))
+            self.bonuses.add(GravityUp((1650, 750)))
+            for x in range(1400, 1601, 50):
+                self.platforms.add(SnowPlatform((x, 300)))
+            self.platforms.add(SnowPlatform((1750, 150)))
+            self.bonuses.add(Money((1760, 200)))
+            for x in range(1000, 1250, 50):
+                self.platforms.add(SnowPlatform((x, 150)))
+            for x in range(600, 850, 50):
+                self.platforms.add(SnowPlatform((x, 300)))
+            for x in range(200, 400, 50):
+                self.platforms.add(SnowPlatform((x, 100)))
+            self.bonuses.add(GravityDown((200, 150)))
+            for x in range(300, 500, 50):
+                self.platforms.add(SnowPlatform((x, 800)))
+            self.bonuses.add(Money((310, 770)))
+            self.finish.add(Finish((450, 750)))
+            for x in range(-500, 2500, 50):
+                self.enemies.add(Ground((x, 1030)))
+            self.main_hero.add(Hero((900, 740), self))
 
     def _groups_update(self, brightness):
         """Метод который обновляет все группы спрайтов"""
@@ -93,15 +123,18 @@ class Game:
             if self.start_time is None:
                 self.start_time = time.time()
             for event in events:
+                if event.type == pygame.KEYDOWN and event.key in [pygame.K_d, pygame.K_RIGHT]:
+                    self.move = "right"  # Если нажата стрелочка направо или d то движемся направо
+                if event.type == pygame.KEYDOWN and event.key in [pygame.K_a, pygame.K_LEFT]:
+                    self.move = "left"  # Если нажата стрелка влево или a то движемся влево
+                if event.type == pygame.KEYUP and event.key in [pygame.K_d, pygame.K_RIGHT, pygame.K_a,
+                                                                pygame.K_LEFT]:
+                    self.move = ""  # Если отпустили кнопку то не движемся
                 if self.gravity == "down":
-                    if event.type == pygame.KEYDOWN and event.key in [pygame.K_d, pygame.K_RIGHT]:
-                        self.move = "right"  # Если нажата стрелочка направо или d то движемся направо
-                    if event.type == pygame.KEYDOWN and event.key in [pygame.K_a, pygame.K_LEFT]:
-                        self.move = "left"  # Если нажата стрелка влево или a то движемся влево
-                    if event.type == pygame.KEYUP and event.key in [pygame.K_d, pygame.K_RIGHT, pygame.K_a,
-                                                                    pygame.K_LEFT]:
-                        self.move = ""  # Если отпустили кнопку то не движемся
                     if event.type == pygame.KEYDOWN and (event.key in [pygame.K_SPACE, pygame.K_w, pygame.K_UP]):
+                        self.main_hero.sprite.set_jump(True)  # Устанавливаем главному герою прыжок
+                elif self.gravity == "up":
+                    if event.type == pygame.KEYDOWN and (event.key in [pygame.K_SPACE, pygame.K_s, pygame.K_DOWN]):
                         self.main_hero.sprite.set_jump(True)  # Устанавливаем главному герою прыжок
             if self.move == "right":
                 self.main_hero.sprite.move("right")
