@@ -39,7 +39,6 @@ class MainMenu(AbstractMenu):
 
     def _set_buttons(self):
         self.buttons.add(TextButton(275, "Уровни", "menu_level"))
-        self.buttons.add(TextButton(425, "О разработчиках", "menu_level"))
         self.buttons.add(TextButton(575, "Выйти из игры", "quite"))
 
     def render(self, events, brightness):
