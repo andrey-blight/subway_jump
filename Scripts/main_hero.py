@@ -183,10 +183,6 @@ class Hero(pygame.sprite.Sprite):
         self.down_border.update(x, y)
         self.left_border.update(x, y)
         self.right_border.update(x, y)
-        self.top_border.draw(SCREEN)
-        self.down_border.draw(SCREEN)
-        self.left_border.draw(SCREEN)
-        self.right_border.draw(SCREEN)
 
     def update(self, direction, brightness):
         self.image.set_alpha(brightness)  # Установка яркости
